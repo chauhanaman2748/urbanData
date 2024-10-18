@@ -54,6 +54,13 @@ app.post('/api/bookings/add', async (req, res) => {
   try {
     const { date, status, details } = req.body;
 
+    const existingBooking = await Booking.findOne({ date: new Date(date) });
+
+    if (existingBooking) {
+      // If a booking exists for that date, send a response indicating it's already booked
+      return res.status(400).send("Already booked for this date.");
+    }
+
     // Create a new booking in MongoDB
     const newBooking = new Booking({
       date: new Date(date),
